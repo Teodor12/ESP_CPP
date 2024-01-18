@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <esp_log.h>
 #include "main.h"
+
 
 #define LOG_TAG "MAIN"
 
@@ -21,6 +20,7 @@ void Main::loop()
 
 extern "C" void app_main(void)
 {
+    ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(main_entry.setup());
     main_entry.loop();
 
