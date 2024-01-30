@@ -1,10 +1,12 @@
 #pragma once
 
-#include "esp_wifi.h"
 #include "esp_mac.h"
-#include <algorithm>
+#include "esp_system.h"
+#include "esp_event.h"
+#include "esp_wifi.h"
+#include "esp_log.h"
 #include <cstring>
-#include <atomic>
+#include <mutex>
 
 #define MAC_ADDR_BYTE_NUM 6
 #define MAC_ADDR_CS_LEN 13
@@ -14,40 +16,50 @@ namespace wifi
     class Wifi
     {
 
-        public:
-            enum class wifi_state_t
-            {
-                NOT_INITIALISED,
-                INITIALISED,
-                READY_TO_CONNECT,
-                CONNECTING,
-                WAITING_FOR_IP,
-                CONNECTED,
-                DISCONNECTED,
-                ERROR
-            };
+    constexpr static const char *ssid{"CUMYNET-ADSL"};
+    constexpr static const char *password{"123456789a"};
 
-            Wifi(void);                                     // default constructor
-            ~Wifi(void) =                   default;        // destructor
-            Wifi(const Wifi &) =            default;        // copy constructor
-            Wifi(Wifi &&) =                 default;        // move constructor
-            Wifi &operator=(const Wifi &) = default;        // assignmet operator for rvalues
-            Wifi &operator=(Wifi &&) =      default;        // assignment operator for lvalues
+    public:
+        enum class wifi_state_t
+        {
+            NOT_INITIALISED,
+            INITIALISED,
+            READY_TO_CONNECT,
+            CONNECTING,
+            WAITING_FOR_IP,
+            CONNECTED,
+            DISCONNECTED,
+            ERROR
+        };
 
-            esp_err_t init(void);
-            esp_err_t begin(void);
+        Wifi(void);                              // default constructor
+        ~Wifi(void) = default;                   // destructor
+        Wifi(const Wifi &) = default;            // copy constructor
+        Wifi(Wifi &&) = default;                 // move constructor
+        Wifi &operator=(const Wifi &) = default; // assignmet operator for rvalues
+        Wifi &operator=(Wifi &&) = default;      // assignment operator for lvalues
 
-            char* wifi_get_mac_address(void)const
-            {
-                return this->cstring_mac_address;
+        esp_err_t wifi_init(void);
+        esp_err_t wifi_begin(void);
+
+        char *wifi_get_mac_address(void) const
+        {
+            return this->mac_address_cstring;
             }
 
         private:
-            static char cstring_mac_address[MAC_ADDR_CS_LEN]; // this buffer stores the formatted, c-string mac-address
-            esp_err_t _get_mac_address(void);                 // function to load the hard-coded EFUSE mac-address to the 'cstring_mac_address' member variable
-            static std::atomic_bool first_call;
-            void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data) ;
-            void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
-            void ip_event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data);
+            static char mac_address_cstring[MAC_ADDR_CS_LEN]; // this buffer stores the formatted, c-string mac-address
+            static wifi_state_t wifi_state;
+            static std::mutex init_mutex;
+            static std::mutex connect_mutex;
+            static std::mutex state_mutex;
+            esp_err_t _get_mac_address(void);
+            static esp_err_t _init(void);
+            static esp_err_t begin(void);
+            static wifi_init_config_t wifi_init_config;
+            static wifi_config_t wifi_config;
+            static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+            static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
+            static void ip_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
     };
 };
