@@ -2,21 +2,24 @@
 
 #include "esp_mac.h"
 #include "esp_system.h"
-#include "esp_event.h"
-#include "esp_wifi.h"
 #include "esp_log.h"
+#include "esp_wifi.h"
+#include "esp_netif.h"
+#include "esp_event.h"
 #include <cstring>
 #include <mutex>
 
 #define MAC_ADDR_BYTE_NUM 6
 #define MAC_ADDR_CS_LEN 13
 
+#define WIFI_LOG_TAG "WIFI"
+
 namespace wifi
 {
     class Wifi
     {
 
-    constexpr static const char *ssid{"CUMYNET-ADSL"};
+    constexpr static const char *ssid{"CUMYNET_REP1"};
     constexpr static const char *password{"123456789a"};
 
     public:
@@ -40,7 +43,7 @@ namespace wifi
         Wifi &operator=(Wifi &&) = default;      // assignment operator for lvalues
 
         esp_err_t wifi_init(void);
-        esp_err_t wifi_begin(void);
+        esp_err_t wifi_start(void);
 
         char *wifi_get_mac_address(void) const
         {

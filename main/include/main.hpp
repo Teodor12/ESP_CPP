@@ -5,6 +5,7 @@
 #include "esp_log.h"
 #include "esp_err.h"
 #include "nvs_flash.h"
+#include <Wifi.hpp>
 
 #define PDSECOND pdMS_TO_TICKS(1000)
 
@@ -12,4 +13,5 @@ class Main final{
     public:
         esp_err_t setup(void);
         void loop(void);
+        wifi::Wifi wifi_handle;
 };
