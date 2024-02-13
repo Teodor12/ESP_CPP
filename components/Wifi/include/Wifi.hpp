@@ -6,8 +6,10 @@
 #include "esp_wifi.h"
 #include "esp_netif.h"
 #include "esp_event.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include <cstring>
-#include <mutex>
+
 
 #define MAC_ADDR_BYTE_NUM 6
 #define MAC_ADDR_CS_LEN 13
@@ -53,9 +55,9 @@ namespace wifi
         private:
             static char mac_address_cstring[MAC_ADDR_CS_LEN]; // this buffer stores the formatted, c-string mac-address
             static wifi_state_t wifi_state;
-            static std::mutex init_mutex;
-            static std::mutex connect_mutex;
-            static std::mutex state_mutex;
+            static SemaphoreHandle_t init_mutex;
+            static SemaphoreHandle_t connect_mutex;
+            static SemaphoreHandle_t state_mutex;
             esp_err_t _get_mac_address(void);
             static esp_err_t _init(void);
             static esp_err_t begin(void);
