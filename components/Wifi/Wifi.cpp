@@ -258,6 +258,7 @@ namespace wifi
             break;
         }
         default:
+            ESP_LOGW(WIFI_LOG_TAG, "%s:%d Default switch case (%ld)", __func__, __LINE__, event_id);
             break;
         }
     }
