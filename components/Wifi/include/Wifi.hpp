@@ -50,7 +50,7 @@ namespace wifi
         char *wifi_get_mac_address(void) const
         {
             return this->mac_address_cstring;
-            }
+        }
 
         private:
             static char mac_address_cstring[MAC_ADDR_CS_LEN]; // this buffer stores the formatted, c-string mac-address
@@ -63,6 +63,7 @@ namespace wifi
             static esp_err_t begin(void);
             static wifi_init_config_t wifi_init_config;
             static wifi_config_t wifi_config;
+            static const char* wifi_state_to_name(wifi_state_t wifi_state);
             static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
             static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
             static void ip_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data);
